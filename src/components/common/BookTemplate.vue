@@ -3,7 +3,8 @@
         <div class="">
             <div class="text-normal font-semibold mb-4">请先创建或者查找学习集</div>
             <div>
-                <van-button style="width: 96px;" color="#12BFA2" round type="success" size="small" class="text-base font-bold px-5">
+                <van-button color="#12BFA2" round type="success" size="small"
+                    class="text-base font-bold px-5 button-width">
                     创建学习集</van-button>
             </div>
         </div>
@@ -13,13 +14,20 @@
         推荐学习集
     </div>
 </template>
-<script>
+<script setup>
 
-import { Button } from 'vant';
-export default {
-    [Button.name]: {
-        Button
-    }
-}
+// import { Button } from 'vant';
+
+    
+// export default {
+//     [Button.name]: {
+//         Button
+//     }
+// }
 
 </script>
+<style>
+.button-width {
+    width: 6rem;
+}
+</style>

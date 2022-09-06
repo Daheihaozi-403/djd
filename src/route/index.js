@@ -14,13 +14,17 @@ const CreateSet = () =>
     import ("../components/CreateSet")
 const MyInformation = () =>
     import ("../components/MyInformation")
+const MyMoney = () =>
+    import ("../components/MyMoney")
     // 2. 定义一些路由
     // 每个路由都需要映射到一个组件。
     // 我们后面再讨论嵌套路由。
 const routes = [
-    { path: '/', component: HomePage },
-    { path: '/createset', component: CreateSet },
-    { path: '/myinformation', component: MyInformation },
+    { name: "HomePage", path: '/', component: HomePage },
+    { name: "CreateSet", path: '/create', component: CreateSet },
+    { name: "MyInformation", path: '/my', component: MyInformation },
+    { name: "MyMoney", path: '/my/money', component: MyMoney },
+
     // { path: '/about', component: HomePage },
 ]
 

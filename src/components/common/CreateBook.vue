@@ -1,12 +1,28 @@
 <template>
-    <div class="bg-white rounded-2xl p-6">
-        <div class="flex justify-between mb-4" style="height:28px">
-            <span style="color: #12BFA2;" class="text-lg font-semibold">创建学习集</span>
-            <div style="height: 16px;width: 16px; padding-top: 6px;">
-                <img src="../../assets/Icon4.png" alt="" >
-            </div>
-
-        </div>
-        <p class="text-xs" style="opacity: 0.45;">创建学习集介绍文案，创建学习集介绍文案，创建学习集介绍文案。</p>
+  <div class="bg-white rounded-2xl p-6">
+    <div class="flex justify-between mb-4 b-box">
+      <span style="color: #12bfa2" class="text-lg font-semibold"
+        >创建学习集</span
+      >
+      <div class="create-box-icon">
+        <img src="../../assets/Icon4.png" alt="" />
+      </div>
     </div>
+    <p class="text-xs text-color-grey">
+      创建学习集介绍文案，创建学习集介绍文案，创建学习集介绍文案。
+    </p>
+  </div>
 </template>
+<style scope>
+.b-box {
+  height: 1.75rem;
+}
+.create-box-icon {
+  height: 1rem;
+  width: 1rem;
+  padding-top: 0.375rem;
+}
+.text-color-grey {
+  color: #8c8c8c;
+}
+</style>
