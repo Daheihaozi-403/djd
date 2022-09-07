@@ -1,16 +1,14 @@
 <template>
   <div class="bg-white rounded-2xl p-6">
     <div class="flex justify-between mb-4 b-box">
-      <span style="color: #12bfa2" class="text-lg font-semibold"
-        >创建学习集</span
-      >
-      <router-link to="/create/infor">
+      <span style="color: #12bfa2" class="text-lg font-semibold">创建卡片</span>
+      <router-link to="/create/card">
         <div class="create-box-icon">
           <img src="../../assets/Icon4.png" alt="" /></div
       ></router-link>
     </div>
     <p class="text-xs text-color-grey">
-      创建学习集介绍文案，创建学习集介绍文案，创建学习集介绍文案。
+      单词/句子/知识点，都可以创建为卡片；左滑右滑，随手记忆。
     </p>
   </div>
 </template>

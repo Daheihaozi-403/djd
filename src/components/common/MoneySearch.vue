@@ -17,13 +17,15 @@
     <van-popover
       v-model:show="showPopover"
       :actions="actions"
-      @select="onSelect"
       :close-on-click-action="false"
       placement="bottom-end"
     >
       <template #reference>
         <van-button type="primary"
-          ><img src="../../assets/sort-descending.png" alt=""
+          ><img
+            src="../../assets/sort-descending.png"
+            alt=""
+            class="select-photo"
         /></van-button>
       </template>
     </van-popover>
@@ -36,31 +38,29 @@ import { ref } from "vue";
 const value = ref("");
 const showPopover = ref(false);
 const actions = [
-  { text: "时间早-晚", icon: "https://hakaimg.com/i/2022/09/05/jvrshv.png" },
+  {
+    text: "时间早-晚",
+    icon: "https://hakaimg.com/i/2022/09/05/jvrshv.png",
+  },
   { text: "时间晚-早", icon: "https://hakaimg.com/i/2022/09/05/jwgcyn.png" },
   { text: "只看收入", icon: "https://hakaimg.com/i/2022/09/05/pdcm0b.png" },
   { text: "只看支出", icon: "https://hakaimg.com/i/2022/09/05/pdnqf3.png" },
 ];
-const onSelect = {
-  onSelect() {
-    this.color = "#12BFA2";
-    this.icon = "";
-    this.style.backgroundcolor = "#EAF9F0";
-    this.showCode = !this.showCode;
-  },
-};
 </script>
 
 <style scope>
 .money-search {
   border-radius: 0.75rem;
   background-color: white;
-  width: 18rem;
+  width: 100%;
   height: 3rem;
   overflow: hidden;
   padding: 0;
 }
-
+.select-photo {
+  height: 2rem;
+  width: 2rem;
+}
 .van-button--primary {
   background-color: #f0f4f5;
   border: 0;
@@ -80,5 +80,9 @@ const onSelect = {
 } */
 .van-popover__action-text {
   font-size: 1rem;
+}
+.hover {
+  background-color: rgb(245, 103, 8);
+  color: aquamarine;
 }
 </style>

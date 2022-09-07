@@ -3,7 +3,7 @@
     <div class="flex mb-4 justify-between relative">
       <div class="flex">
         <div class="mr-4">
-          <img src="../../assets/Rectangle.png" alt="" />
+          <img src="../../assets/archive(1).png" alt="" />
         </div>
         <div>
           <div class="text-sm font-semibold mb-1">英语4级学习集</div>
