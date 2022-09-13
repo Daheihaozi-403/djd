@@ -1,13 +1,17 @@
 <template>
   <div class="flex mb-6">
     <div class="my-photo">
-      <img src="../../assets/mask-group.png" alt="" />
+      <img :src="myInfo.avatar" alt="" />
       <img src="../../assets/Group-26566.png" alt="" class="ellipse" />
       <img src="../../assets/Icon5.png" alt="" class="rectangle" />
     </div>
     <div class="pt-2">
-      <div class="font-bold text-2xl">Daniel Travis</div>
-      <div class="font-medium text-xs text-cgr">加入学习105天</div>
+      <div class="font-bold text-2xl">
+        {{ myInfo.name }}
+      </div>
+      <div class="font-medium text-xs text-cgr">
+        加入学习{{ myInfo.study_day }}天
+      </div>
     </div>
   </div>
   <div class="my-money flex justify-between">
@@ -28,6 +32,13 @@
     ></router-link>
   </div>
 </template>
+<script setup>
+import { getUser } from "@/utils/helpers";
+import { ref } from "vue";
+
+const myInfo = ref("");
+myInfo.value = getUser();
+</script>
 <style scope>
 .my-photo {
   width: 4.1rem;
@@ -35,8 +46,6 @@
   background-color: white;
   border-radius: 50%;
   margin-right: 1.5rem;
-  /* 24px */
-  /* 1px=0.0625rem */
   position: relative;
 }
 

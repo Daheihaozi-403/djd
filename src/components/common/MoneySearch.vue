@@ -59,7 +59,7 @@ const actions = [
 }
 .select-photo {
   height: 2rem;
-  width: 2rem;
+  width: 2.3rem;
 }
 .van-button--primary {
   background-color: #f0f4f5;

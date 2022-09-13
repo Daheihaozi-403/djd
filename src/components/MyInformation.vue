@@ -12,12 +12,4 @@
 import TabbarBottom from "./common/TabbarBottom";
 import MyName from "./common/MyName";
 import MyInforBox from "./common/MyInforBox";
-
-// export default {
-//     components: {
-//         TabbarBottom,
-//         MyName
-//     },
-
-// }
 </script>

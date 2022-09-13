@@ -87,6 +87,7 @@ const end = ref(0);
   height: 2.5rem;
   background: rgba(125, 125, 125, 0.1);
   border-radius: 1rem;
+  /* padding: 0 1.125rem; */
 }
 .button3 {
   width: 10rem;

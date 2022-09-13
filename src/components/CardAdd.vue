@@ -6,12 +6,8 @@
       <div class="mb-4">所属学习集</div>
 
       <div class="input0 pr-4 mb-4">
-        <select class="input" v-model="value1">
-          <option
-            v-for="(item, index) in options"
-            :key="index"
-            :value="item.value"
-          >
+        <select class="input">
+          <option v-for="(item, index) in options" :key="index">
             {{ item.text }}
           </option>
         </select>
@@ -35,7 +31,7 @@
     <div v-if="result" class="mt-10">
       <img src="../assets/addphoto1.png" alt="" class="mb-16" />
       <div class="mb-4 text-center">复制链接在浏览器中打开</div>
-      <input type="text " class="mb-6 input1" />
+      <input type="text " class="mb-6 input1 px-6" />
       <div class="m-4 button3" @click="copy = !copy">
         <span v-if="!copy">复制链接</span>
         <span v-if="copy"
@@ -61,15 +57,12 @@ const clickEven = (val) => {
 };
 const copy = ref(0);
 const end = ref(0);
-const value1 = ref(1000);
 
 const options = [
   {
-    value: 1000,
     text: "英语6级学习集",
   },
   {
-    value: 2000,
     text: "英语4级学习集",
   },
 ];
