@@ -3,7 +3,9 @@
     <div class="box-top py-5 px-9 flex justify-between mt-6">
       <div>
         <img src="../../assets/archive.png" alt="" class="marx-auto" />
-        <div class="text-center font-bold text-lg">12</div>
+        <div class="text-center font-bold text-lg">
+          {{ myStudy.create_book_total }}
+        </div>
         <div class="text-center text-xs font-normal text-color-gr">
           我创建的
         </div>
@@ -12,7 +14,9 @@
 
       <div>
         <img src="../../assets/folder-add.png" alt="" class="marx-auto" />
-        <div class="text-center font-bold text-lg">26</div>
+        <div class="text-center font-bold text-lg">
+          {{ myStudy.join_book_total }}
+        </div>
         <div class="text-center text-xs font-normal text-color-gr">
           我加入的
         </div>
@@ -20,7 +24,9 @@
       <div class="bor-right"></div>
       <div>
         <img src="../../assets/Group-26546.png" alt="" class="marx-auto" />
-        <div class="text-center font-bold text-lg">17</div>
+        <div class="text-center font-bold text-lg">
+          {{ myStudy.collect_book_total }}
+        </div>
         <div class="text-center text-xs font-normal text-color-gr">
           我的收藏
         </div>
@@ -73,7 +79,24 @@
     </div>
   </div>
 </template>
+<script setup>
+import { statistics } from "@/api/api";
+// import { setStatistics, getStatistics } from "@/utils/helpers";
+import { ref } from "vue";
+const myStudy = ref("");
+const toNum = async () => {
+  try {
+    const resp = await statistics();
+    // setStatistics(resp.data);
 
+    myStudy.value = resp.data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+toNum();
+</script>
 <style scope>
 .box-top {
   width: 100%;

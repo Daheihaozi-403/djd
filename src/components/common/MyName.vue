@@ -1,7 +1,7 @@
 <template>
   <div class="flex mb-6">
     <div class="my-photo">
-      <img :src="myInfo.avatar" alt="" />
+      <img :src="myInfo.avatar" alt="" class="userphoto" />
       <img src="../../assets/Group-26566.png" alt="" class="ellipse" />
       <img src="../../assets/Icon5.png" alt="" class="rectangle" />
     </div>
@@ -21,7 +21,7 @@
       </div>
 
       <div class="opacity-100 my-rmb">
-        <p>¥4,500</p>
+        <p>¥{{ myMoney.balance }}</p>
         <p>我的收入</p>
       </div>
     </div>
@@ -33,11 +33,24 @@
   </div>
 </template>
 <script setup>
+import { money } from "@/api/api";
 import { getUser } from "@/utils/helpers";
 import { ref } from "vue";
-
+const myMoney = ref("");
+const toMoney = async () => {
+  try {
+    const resp = await money();
+    myMoney.value = resp.data;
+  } catch (err) {
+    console.log(err);
+  }
+};
 const myInfo = ref("");
 myInfo.value = getUser();
+
+console.log(myMoney);
+
+toMoney();
 </script>
 <style scope>
 .my-photo {
@@ -48,7 +61,9 @@ myInfo.value = getUser();
   margin-right: 1.5rem;
   position: relative;
 }
-
+.userphoto {
+  border-radius: 50%;
+}
 .ellipse {
   position: absolute;
   top: 0;

@@ -1,10 +1,11 @@
 <template>
   <div class="mx-4 mt-4">
     <div class="text-normal font-semibold text-center mb-7">学习集详情</div>
-    <img src="../assets/studyinfortop.png" alt="" class="mb-4" />
+
+    <img :src="booksInfo.cover" alt="" class="mb-4 rounded-2xl" />
     <div class="infor-box mb-4">
       <div class="flex justify-between infor-box-title">
-        <span>英语6级学习集</span>
+        <span> {{ booksInfo.name }}</span>
         <div class="flex">
           <img
             src="../assets/studyinforIcon1.png"
@@ -32,28 +33,40 @@
         </div>
       </div>
       <div class="infor-box-body pt-2">
-        <p class="body-title mb-2">英语考级保过最佳助力</p>
+        <p class="body-title mb-2">
+          {{ booksInfo.recommend }}
+        </p>
         <p class="body-p leading-5">
-          英语6级学习级详细介绍内容，英语6级学习级详细介绍内容，英语6级学习级详细介绍内容，英语6级学习级详细介绍内容，英语6级学习级。
+          {{ booksInfo.describe }}
         </p>
         <div class="flex mt-4">
-          <div class="body-p leading-4 mr-2 infor-tag mb-4">英语</div>
-          <div class="body-p leading-4 mr-2 infor-tag mb-4">六级</div>
-          <div class="body-p leading-4 mr-2 infor-tag mb-4">考级</div>
+          <tag
+            class="body-p leading-4 mr-2 infor-tag mb-4"
+            v-for="(item, index) in booksInfo.tags.split(',')"
+            :key="index"
+            :value="item.value"
+            >{{ item }}</tag
+          >
         </div>
       </div>
       <div class="flex justify-between user-box">
         <div class="flex">
           <img
-            class="mr-4 user-photo"
-            :src="require(`../assets/newuser.png`)"
+            class="mr-4 user-photo rounded-full"
+            :src="booksInfo.user.avatar"
           />
           <div class="maintainCarCon">
-            <div class="text-xs leading-4 mb-1">创建者：小明</div>
-            <div class="text-xs leading-4 color-gray">加入学习105天</div>
+            <div class="text-xs leading-4 mb-1">
+              {{ booksInfo.user.name }}
+            </div>
+            <div class="text-xs leading-4 color-gray">
+              加入学习 {{ booksInfo.user.created_at_zh }}
+            </div>
           </div>
         </div>
-        <div class="text-xs leading-4 color-gray">创建于1个月前</div>
+        <div class="text-xs leading-4 color-gray">
+          创建于 {{ booksInfo.created_at_zh }}
+        </div>
       </div>
       <div v-if="isTrue.isFree">
         <van-dialog v-model:show="show" title="标题" show-cancel-button>
@@ -66,23 +79,29 @@
     <div class="join-user mb-6">
       <div class="flex justify-between mb-4">
         <span class="text-sm font-semibold">加入的用户</span>
-        <router-link to="/join" class="text-sm font-medium"
+        <router-link
+          :to="{
+            path: '/join',
+            query: {
+              id: route.query.id,
+            },
+          }"
+          class="text-sm font-medium"
           >查看所有</router-link
         >
       </div>
       <ul class="flex justify-between">
-        <li v-for="(item, index) in newUsers" :key="index">
-          <div>
-            <img
-              class="user-photo"
-              :src="require(`../assets/${item.icon}.png`)"
-            />
-            <div class="text-xs leading-5 text-center">{{ item.username }}</div>
-          </div>
+        <li
+          v-for="(item, index) in newUsers.items.slice(0, 5)"
+          :key="index"
+          class="new-user"
+        >
+          <img :src="item.avatar" />
+          <div class="text-xs leading-5 text-center">{{ item.name }}</div>
         </li>
       </ul>
     </div>
-    <word-card></word-card>
+    <word-card :value="doc" />
     <div class="my-8">
       <div class="text-center font-medium mb-8 color-green">查看全部卡片</div>
       <div
@@ -101,28 +120,23 @@
 import WordCard from "./common/WordCard";
 import { ref } from "vue";
 import { reactive } from "vue";
-const newUsers = [
-  {
-    icon: "userphoto",
-    username: "Phillip",
-  },
-  {
-    icon: "userphoto",
-    username: "Phillip",
-  },
-  {
-    icon: "userphoto",
-    username: "Phillip",
-  },
-  {
-    icon: "userphoto",
-    username: "Phillip",
-  },
-  {
-    icon: "userphoto",
-    username: "Phillip",
-  },
-];
+import { useRoute } from "vue-router";
+import { infor, users } from "@/api/api";
+
+const route = useRoute();
+const booksInfo = ref("");
+const newUsers = ref("");
+const getInfo = async () => {
+  try {
+    const resp = await infor(route.query.id);
+    const user = await users(route.query.id);
+    booksInfo.value = resp.data;
+    newUsers.value = user.data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+getInfo();
 const showPopover = ref(false);
 const actions = [
   {
@@ -142,6 +156,7 @@ const onSelect = (action) => {
   }
 };
 const show = ref(false);
+const doc = ref(route.query.id);
 </script>
 <style scoped>
 .infor-box {
@@ -179,6 +194,10 @@ const show = ref(false);
 }
 .user-box {
   padding-top: 1rem;
+}
+.new-user {
+  height: 4.25rem;
+  width: 3rem;
 }
 .user-photo {
   width: 2.5rem;

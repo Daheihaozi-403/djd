@@ -7,98 +7,43 @@
     <ul class="input">
       <li
         class="flex justify-between user-box mb-4"
-        v-for="(item, index) in newuser"
+        v-for="(item, index) in newUsers.items"
         :key="index"
       >
         <div class="flex">
-          <img
-            class="mr-4 user-photo"
-            :src="require(`../assets/${item.icon}.png`)"
-          />
+          <img class="mr-4 user-photo" :src="item.avatar" />
           <div class="maintainCarCon">
-            <div class="text-xs leading-4 mb-1">{{ item.username }}</div>
+            <div class="text-xs leading-4 mb-1">{{ item.name }}</div>
             <div class="text-xs leading-4 color-gray">
-              {{ item.time }}
+              {{ item.join_day }}
             </div>
           </div>
         </div>
-        <div class="text-xs leading-4 color-gray">{{ item.study }}</div>
+        <div class="text-xs leading-4 color-gray">{{ item.study_day }}</div>
       </li>
     </ul>
   </div>
 </template>
 <script setup>
-const newuser = [
-  {
-    icon: "newuser",
-    username: "Julia",
-    time: "加入学习105天",
-    study: "已学习65%",
-  },
-  {
-    value: 2000,
-    icon: "newuser",
-    username: "Julia",
-    time: "加入学习105天",
-    study: "已学习65%",
-  },
-  {
-    value: 3000,
-    icon: "newuser",
-    username: "Julia",
-    time: "加入学习105天",
-    study: "已学习65%",
-  },
-  {
-    value: 4000,
-    icon: "newuser",
-    username: "Julia",
-    time: "加入学习105天",
-    study: "已学习65%",
-  },
-  {
-    value: 5000,
-    icon: "newuser",
-    username: "Julia",
-    time: "加入学习105天",
-    study: "已学习65%",
-  },
-  {
-    value: 6000,
-    icon: "newuser",
-    username: "Julia",
-    time: "加入学习105天",
-    study: "已学习65%",
-  },
-  {
-    value: 7000,
-    icon: "newuser",
-    username: "Julia",
-    time: "加入学习105天",
-    study: "已学习65%",
-  },
-  {
-    value: 8000,
-    icon: "newuser",
-    username: "Julia",
-    time: "加入学习105天",
-    study: "已学习65%",
-  },
-  {
-    value: 9000,
-    icon: "newuser",
-    username: "Julia",
-    time: "加入学习105天",
-    study: "已学习65%",
-  },
-  {
-    value: 10000,
-    icon: "newuser",
-    username: "Julia",
-    time: "加入学习105天",
-    study: "已学习65%",
-  },
-];
+import { ref } from "vue";
+
+import { users } from "@/api/api";
+import { useRoute } from "vue-router";
+const route = useRoute();
+
+const newUsers = ref("");
+
+const getInfo = async () => {
+  try {
+    const user = await users(route.query.id);
+
+    newUsers.value = user.data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+console.log(newUsers);
+getInfo();
 </script>
 <style scoped>
 .user-box {

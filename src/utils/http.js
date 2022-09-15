@@ -47,8 +47,10 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     function(response) {
         // 对响应数据做点什么
-        // console.log();
-        setToken(response.headers.authorization);
+        if (response.headers.authorization) {
+            setToken(response.headers.authorization);
+        }
+
         // response.headers['Authorization'] = response.data.token;
         return response.status === 200 ?
             Promise.resolve(response.data) :
