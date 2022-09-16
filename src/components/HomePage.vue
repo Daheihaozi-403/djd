@@ -2,7 +2,10 @@
   <div class="text-normal font-semibold text-center mt-4 mb-7">学习</div>
   <div class="mx-4">
     <book-template />
-    <div class="mb-16"><note-book /></div>
+    <div class="mb-16">
+      <note-book />
+      <my-books />
+    </div>
 
     <TabbarBottom active1="homePage"></TabbarBottom>
   </div>
@@ -12,6 +15,7 @@
 import BookTemplate from "./common/BookTemplate";
 import NoteBook from "./common/NoteBook.vue";
 import TabbarBottom from "./common/TabbarBottom.vue";
+import MyBooks from "./common/MyBooks.vue";
 import { setUser } from "@/utils/helpers";
 import { login } from "@/api/api";
 const goLogin = async (func) => {

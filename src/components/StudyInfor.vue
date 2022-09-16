@@ -7,29 +7,30 @@
       <div class="flex justify-between infor-box-title">
         <span> {{ booksInfo.name }}</span>
         <div class="flex">
+          <div class="mr-2">
+            <van-popover
+              v-model:show="showPopover"
+              :actions="actions"
+              class="css-display"
+              placement="bottom-end"
+              @select="onSelect"
+            >
+              <template #reference>
+                <van-button type="primary" class="bg-display">
+                  <img
+                    src="../assets/studyinforIcon1.png"
+                    alt=""
+                    class="icon-study"
+                /></van-button>
+              </template>
+            </van-popover>
+          </div>
           <img
-            src="../assets/studyinforIcon1.png"
+            src="../assets/studyinforIcon3.png"
             alt=""
-            class="icon-study mr-4"
+            class="icon-study ml-2"
+            @click="collectBook"
           />
-          <van-popover
-            v-model:show="showPopover"
-            :actions="actions"
-            class="css-display"
-            placement="bottom-end"
-            @select="onSelect"
-          >
-            <template #reference>
-              <van-button type="primary" class="bg-display">
-                <img
-                  src="../assets/studyinforIcon2.png"
-                  alt=""
-                  class="icon-study mr-4"
-              /></van-button>
-            </template>
-          </van-popover>
-
-          <img src="../assets/studyinforIcon3.png" alt="" class="icon-study" />
         </div>
       </div>
       <div class="infor-box-body pt-2">
@@ -68,13 +69,13 @@
           创建于 {{ booksInfo.created_at_zh }}
         </div>
       </div>
-      <div v-if="isTrue.isFree">
+      <!-- <div v-if="isTrue.isFree">
         <van-dialog v-model:show="show" title="标题" show-cancel-button>
           <img
             src="https://fastly.jsdelivr.net/npm/@vant/assets/apple-3.jpeg"
           />
         </van-dialog>
-      </div>
+      </div> -->
     </div>
     <div class="join-user mb-6">
       <div class="flex justify-between mb-4">
@@ -101,7 +102,7 @@
         </li>
       </ul>
     </div>
-    <word-card :value="doc" />
+    <word-card :value="route.query.id" />
     <div class="my-8">
       <div class="text-center font-medium mb-8 color-green">查看全部卡片</div>
       <div
@@ -119,9 +120,9 @@
 <script setup>
 import WordCard from "./common/WordCard";
 import { ref } from "vue";
-import { reactive } from "vue";
+// import { reactive } from "vue";
 import { useRoute } from "vue-router";
-import { infor, users } from "@/api/api";
+import { infor, users, delBooks, collect } from "@/api/api";
 
 const route = useRoute();
 const booksInfo = ref("");
@@ -137,26 +138,33 @@ const getInfo = async () => {
   }
 };
 getInfo();
+
 const showPopover = ref(false);
 const actions = [
   {
     text: "编辑",
     icon: "add-o",
-    imageUrl: require("../assets/studyright.png"),
+    num: 1,
   },
-  { text: "删除", icon: "delete", img: "../assets/studyright.png" },
+  { text: "删除", icon: "delete", num: 2 },
 ];
-var isTrue = reactive({
-  isFree: false,
-});
 
 const onSelect = (action) => {
-  if (action.text == "删除") {
-    isTrue.isFree = !isTrue.isFree;
+  if (action.num !== 1) {
+    console.log(1212);
+
+    delBooks(route.query.id);
   }
 };
-const show = ref(false);
-const doc = ref(route.query.id);
+const collectBook = () => {
+  try {
+    collect(route.query.id);
+  } catch (err) {
+    console.log(err);
+  }
+};
+collectBook();
+// const show = ref(false);
 </script>
 <style scoped>
 .infor-box {
@@ -246,7 +254,6 @@ const doc = ref(route.query.id);
 .css-display {
   height: 1.625rem;
   padding: 0;
-  margin: 0;
   position: absolute;
 }
 </style>
@@ -256,5 +263,8 @@ const doc = ref(route.query.id);
 }
 .van-popover__action {
   width: 100%;
+}
+.van-popover__wrapper {
+  width: 1.25rem;
 }
 </style>

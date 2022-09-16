@@ -6,6 +6,7 @@
       placeholder="8个字以内"
       class="input-style"
       maxlength="8"
+      v-model="state.book.name"
     />
   </div>
   <div class="font-title mb-4">推荐语</div>
@@ -15,52 +16,73 @@
       placeholder="一句话推荐，15字以内"
       class="input-style"
       maxlength="15"
+      v-model="state.book.recommend"
     />
   </div>
   <div class="font-title mb-4">详细说明</div>
   <div class="mb-6">
-    <input type="text" class="input-style1" />
+    <input type="text" class="input-style1" v-model="state.book.describe" />
   </div>
   <div class="font-title mb-4">学习集图片</div>
   <div class="mb-6 flex">
-    <div class="relative overflow-hidden set-photo mr-4" @click="changephoto1">
+    <div
+      class="relative overflow-hidden set-photo mr-4"
+      @click="changephoto(1)"
+    >
       <img src="../../assets/archive(1).png" alt="" />
       <img
         src="../../assets/Iconsetphoto.png"
         alt=""
-        :class="date.isFree1 ? '' : 'icon-setphoto'"
+        :class="state.clickPhoto !== 1 ? '' : 'icon-setphoto'"
       />
     </div>
-    <div class="relative overflow-hidden set-photo mr-4" @click="changephoto2">
+    <div
+      class="relative overflow-hidden set-photo mr-4"
+      @click="changephoto(2)"
+    >
       <img src="../../assets/archive(2).png" alt="" />
       <img
         src="../../assets/Iconsetphoto.png"
         alt=""
-        :class="date.isFree2 ? '' : 'icon-setphoto'"
+        :class="state.clickPhoto !== 2 ? '' : 'icon-setphoto'"
       />
     </div>
-    <div class="relative overflow-hidden set-photo mr-4" @click="changephoto3">
+    <div
+      class="relative overflow-hidden set-photo mr-4"
+      @click="changephoto(3)"
+    >
       <img src="../../assets/archive3.png" alt="" />
       <img
         src="../../assets/Iconsetphoto.png"
         alt=""
-        :class="date.isFree3 ? '' : 'icon-setphoto'"
+        :class="state.clickPhoto !== 3 ? '' : 'icon-setphoto'"
       />
     </div>
-    <div class="relative overflow-hidden set-photo mr-4" @click="changephoto4">
+    <div
+      class="relative overflow-hidden set-photo mr-4"
+      @click="changephoto(4)"
+    >
       <img src="../../assets/archive4.png" alt="" />
       <img
         src="../../assets/Iconsetphoto.png"
         alt=""
-        :class="date.isFree4 ? '' : 'icon-setphoto'"
+        :class="state.clickPhoto !== 4 ? '' : 'icon-setphoto'"
       />
     </div>
   </div>
   <div class="font-title mb-4">标签</div>
-  <div class="mb-6 flex">
-    <div class="button-style">英语</div>
-    <div class="button-style">六级</div>
-    <div class="button-style1 mt-1.5">
+  <div class="mb-6" style="overflow: auto; width: 100%; display: flex">
+    <input
+      style="min-width: 5rem; width: 5rem"
+      type="text"
+      v-for="(item, i) of state.book.tags"
+      v-model="state.book.tags[i]"
+      :key="i"
+      :readonly="item.readOnly"
+      class="input-tage mb-2"
+      @keyup.enter="inputRead(i)"
+    />
+    <div class="add-tag" @click="onAdd">
       <van-icon name="plus" size="0.62rem" />
     </div>
   </div>
@@ -78,39 +100,50 @@
     >
       付费
     </div>
-    <input type="text" placeholder="0.00" class="input-style2 flex-grow" />
+    <input
+      type="number"
+      placeholder="0.00"
+      class="input-style2 flex-grow"
+      v-model="state.book.price"
+    />
   </div>
   <div class="px-4">
     <div class="button1 mb-4">存为草稿</div>
-    <div class="button2 mb-10">保存并创建学习集</div>
+    <div class="button2 mb-10" @click="getInfo">保存并创建学习集</div>
   </div>
 </template>
 <script setup>
 import { reactive } from "vue";
+import { create } from "@/api/api";
+
+const getInfo = async () => {
+  await create(state.book);
+};
 
 var state = reactive({
   isFree: true,
+  clickPhoto: 0,
+  readonly: [],
+  book: {
+    name: "",
+    recommend: "",
+    describe: "",
+    price: "",
+    tags: [],
+  },
 });
 const changeIsFree = () => {
   state.isFree = !state.isFree;
 };
-var date = reactive({
-  isFree1: true,
-  isFree2: true,
-  isFree3: true,
-  isFree4: true,
-});
-const changephoto1 = () => {
-  date.isFree1 = !date.isFree1;
+
+const changephoto = (num) => {
+  state.clickPhoto = num;
 };
-const changephoto2 = () => {
-  date.isFree2 = !date.isFree2;
-};
-const changephoto3 = () => {
-  date.isFree3 = !date.isFree3;
-};
-const changephoto4 = () => {
-  date.isFree4 = !date.isFree4;
+
+const onAdd = () => {
+  state.book.tags.push({ value: "", readOnly: false });
+
+  // state.book.tags.splice(i, 1);
 };
 </script>
 <style scoped>
@@ -152,7 +185,11 @@ const changephoto4 = () => {
   top: 0;
   right: 0;
 }
-
+.tage-box {
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow: hidden;
+}
 .button-style {
   background: #ffffff;
   border-radius: 1rem;
@@ -164,18 +201,27 @@ const changephoto4 = () => {
   margin-right: 0.5rem;
   white-space: nowrap;
 }
-
+.input-tage {
+  background: #ffffff;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  text-align: center;
+  color: #8e8e93;
+  padding: 0.625rem 0.625rem;
+  margin-right: 0.5rem;
+  min-width: 2rem;
+}
 .button-style.hover {
   color: white;
   background-color: #12bfa2;
 }
 
-.button-style1 {
+.add-tag {
+  min-width: 2rem;
   height: 1.625rem;
   background: #ffffff;
   border-radius: 1rem;
   text-align: center;
-  padding: 0 1rem;
 }
 .button1 {
   width: 100%;

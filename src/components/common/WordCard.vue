@@ -1,10 +1,10 @@
 <template>
   <div class="flex box1 justify-between mb-3">
     <div :class="state1.isFree ? 'hover' : 'box2'" @click="changeIsFree1">
-      全部卡片（{{ cardsInfo.total }}）
+      全部卡片（{{ cardsNum.entry_num }}）
     </div>
     <div :class="state1.isFree ? 'box2' : 'hover'" @click="changeIsFree1">
-      重点卡片（{{ cardsInfo.total }}）
+      重点卡片（{{ cardsNum.collect_entry_num }}）
     </div>
   </div>
 
@@ -23,7 +23,11 @@
               <span class="text-xl font-semibold">{{ item.front }}</span>
             </div>
             <div class="flex">
-              <img class="mr-4" :src="require(`../../assets/wordcard1.png`)" />
+              <img
+                class="mr-4"
+                :src="require(`../../assets/wordcard1.png`)"
+                @click="cardCollect(item.id)"
+              />
               <img class="" :src="require(`../../assets/wordcard2.png`)" />
             </div>
           </div>
@@ -37,7 +41,11 @@
               <img src="../../assets/WordButton1.png" alt="" />
             </van-button>
             <van-button square type="primary" class="word-button">
-              <img src="../../assets/WordButton2.png" alt="" />
+              <img
+                src="../../assets/WordButton2.png"
+                alt=""
+                @click="cardDel(item.id)"
+              />
             </van-button>
           </div>
         </template>
@@ -49,19 +57,22 @@
 import { reactive } from "vue";
 import { ref } from "vue";
 import { defineProps } from "vue";
-import { cards } from "@/api/api";
-// 接收父组件传递过来的值
+import { infor, cards, collectCard, delCard } from "@/api/api";
+
 const bookId = defineProps(["value"]);
 const cardsInfo = ref("");
+const cardsNum = ref("");
+
 const getInfo = async () => {
   try {
     const resp = await cards(bookId.value);
     cardsInfo.value = resp.data;
+    const num = await infor(bookId.value);
+    cardsNum.value = num.data;
   } catch (err) {
     console.log(err);
   }
 };
-
 getInfo();
 var state1 = reactive({
   isFree: true,
@@ -69,45 +80,29 @@ var state1 = reactive({
 const changeIsFree1 = () => {
   state1.isFree = !state1.isFree;
 };
-
-// const newuser = [
-//   {
-//     num: "001",
-//     word: "affiliate",
-//     phonetic: "/ә’filieit/",
-//     translate: "vt. 附属,接纳 vi. 有关",
-//   },
-//   {
-//     num: "002",
-//     word: "affiliate",
-//     phonetic: "/ә’filieit/",
-//     translate: "vt. 附属,接纳 vi. 有关",
-//   },
-//   {
-//     num: "003",
-//     word: "affiliate",
-//     phonetic: "/ә’filieit/",
-//     translate: "vt. 附属,接纳 vi. 有关",
-//   },
-//   {
-//     num: "004",
-//     word: "affiliate",
-//     phonetic: "/ә’filieit/",
-//     translate: "vt. 附属,接纳 vi. 有关",
-//   },
-//   {
-//     num: "005",
-//     word: "affiliate",
-//     phonetic: "/ә’filieit/",
-//     translate: "vt. 附属,接纳 vi. 有关",
-//   },
-//   {
-//     num: "006",
-//     word: "affiliate",
-//     phonetic: "/ә’filieit/",
-//     translate: "vt. 附属,接纳 vi. 有关",
-//   },
-// ];
+const cardCollect = async (id) => {
+  try {
+    await collectCard(id);
+    // console.log(12);
+  } catch (err) {
+    console.log(err);
+  }
+};
+// const changeCard = async (id) => {
+//   try {
+//     const resp = await cards(bookId.value);
+//     cardsInfo.value = resp.data;
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+const cardDel = async (id) => {
+  try {
+    await delCard(id);
+  } catch (err) {
+    console.log(err);
+  }
+};
 </script>
 <style scoped>
 .box1 {
