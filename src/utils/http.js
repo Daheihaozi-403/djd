@@ -25,13 +25,13 @@ const errorHandle = (status, other) => {
 // 添加请求拦截器
 axios.interceptors.request.use(
     function(config) {
-        // 在发送请求之前做些什么
+        config.headers = {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        };
         const token = getToken();
         if (token) {
-            config.headers = {
-                "Content-Type": "application/x-www-form-urlencoded",
-                Authorization: token,
-            };
+            config.headers.Authorization = token;
         }
 
         // console.log(config);

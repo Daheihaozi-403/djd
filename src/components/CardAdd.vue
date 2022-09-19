@@ -6,25 +6,43 @@
       <div class="mb-4">所属学习集</div>
 
       <div class="input0 pr-4 mb-4">
-        <select class="input">
-          <option v-for="(item, index) in options" :key="index">
-            {{ item.text }}
+        <select class="input" v-model="index" @change="clickBook(index)">
+          <option
+            v-for="(item, index) in booksCreate.items"
+            :value="item.id"
+            :key="index"
+          >
+            {{ item.name }}
           </option>
         </select>
       </div>
     </div>
     <div v-if="!result">
-      <div class="px-4 mb-1 text-xs">001</div>
-      <card-infor class="mb-4" />
-      <div class="px-4 mb-1 text-xs">002</div>
-      <card-infor />
+      <div v-for="(item, i) of card.data" :key="i">
+        <div class="px-4 mb-1 text-xs">{{ i + 1 }}</div>
+        <div class="box mb-4">
+          <div class="flex justify-between mb-4">
+            <div class="card-font">正面</div>
+            <input
+              type="text"
+              class="input-card"
+              v-model="card.data[i].front"
+            />
+          </div>
+          <div class="flex justify-between">
+            <div class="card-font">背面</div>
+            <input type="text" class="input-card" v-model="card.data[i].back" />
+          </div>
+        </div>
+      </div>
+
       <div>
         <div class="button-style1">
-          <van-icon name="plus" size="0.5rem" />
+          <van-icon name="plus" size="0.5rem" @click="onAdd" />
         </div>
         <div class="px-4">
           <div class="button1 mb-4">保存并继续添加</div>
-          <div class="button2 mb-10">保存发布</div>
+          <div class="button2 mb-10" @click="setInfo">保存发布</div>
         </div>
       </div>
     </div>
@@ -47,25 +65,65 @@
 </template>
 <script setup>
 import CreateTab from "./common/CreateTab";
-import CardInfor from "./common/CardInfor";
-
+import { reactive } from "vue";
+import { myCreate, createCard } from "@/api/api";
 import { ref } from "vue";
+// import { getSizeStyle } from "vant/lib/utils";
+const card = reactive({
+  data: [
+    {
+      front: "",
+      back: "",
+    },
+  ],
+});
+// const put = reactive([
+//   {
+//     front: "",
+//     back: "",
+//   },
+// ]);
 const result = ref("");
+const booksCreate = ref("");
 const clickEven = (val) => {
   console.log(val);
   result.value = val.content;
 };
 const copy = ref(0);
 const end = ref(0);
+const getInfo = async () => {
+  try {
+    const resp = await myCreate();
+    booksCreate.value = resp.data;
+    // console.log(booksCreate);
+  } catch (err) {
+    console.log(err);
+  }
+};
+const bookId = ref("");
+const clickBook = (index) => {
+  bookId.value = index;
+  // console.log(getSizeStyle(bookId));
+};
+const onAdd = () => {
+  card.data.push("");
+};
 
-const options = [
-  {
-    text: "英语6级学习集",
-  },
-  {
-    text: "英语4级学习集",
-  },
-];
+const setInfo = async () => {
+  try {
+    // let data = JSON.parse(JSON.stringify(put));
+    // data.back = data.back.join(",");
+    // data.front = data.front.join(",");
+    await createCard({
+      book_id: bookId.value,
+      entries: card.data,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+getInfo();
+setInfo();
 </script>
 <style scoped>
 .button-style1 {
@@ -105,6 +163,22 @@ const options = [
   height: 2.5rem;
   background: #e5e8e9;
   border-radius: 1rem;
+}
+.box {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+.card-font {
+  line-height: 2.5rem;
+}
+.input-card {
+  background: rgba(125, 125, 125, 0.1);
+  border-radius: 1rem;
+  flex: 1rem;
+  margin-left: 1rem;
+  min-height: 2.5rem;
+  padding: 0 1.5rem;
 }
 .input {
   width: 100%;

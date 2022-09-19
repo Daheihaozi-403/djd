@@ -1,19 +1,18 @@
 <template>
   <div class="flex">
     <van-search v-model="value" background="#f0f4f5" class="money-search" />
-    <!-- <van-popover
+    <van-popover
       v-model:show="showPopover"
       :actions="actions"
       :close-on-click-action="false"
       placement="bottom-end"
     >
-      >
       <template #reference>
         <van-button type="primary">
           <img src="../../assets/sort-descending.png" alt="" />
         </van-button>
       </template>
-    </van-popover> -->
+    </van-popover>
     <van-popover
       v-model:show="showPopover"
       :actions="actions"

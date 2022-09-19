@@ -1,9 +1,9 @@
 <template>
   <div class="flex box1 justify-between mb-3">
-    <div :class="state1.isFree ? 'hover' : 'box2'" @click="changeIsFree1">
+    <div :class="state.isFree ? 'hover' : 'box2'" @click="changeIsFree1">
       全部卡片（{{ cardsNum.entry_num }}）
     </div>
-    <div :class="state1.isFree ? 'box2' : 'hover'" @click="changeIsFree1">
+    <div :class="state.isFree ? 'box2' : 'hover'" @click="changeIsFree1">
       重点卡片（{{ cardsNum.collect_entry_num }}）
     </div>
   </div>
@@ -37,9 +37,18 @@
         </van-cell>
         <template #right>
           <div class="ml-6 mt-10">
-            <van-button square type="danger" class="word-button button-mr">
-              <img src="../../assets/WordButton1.png" alt="" />
-            </van-button>
+            <router-link
+              :to="{
+                path: '/change',
+                query: {
+                  id: item.id,
+                },
+              }"
+            >
+              <van-button square type="danger" class="word-button button-mr">
+                <img src="../../assets/WordButton1.png" alt="" />
+              </van-button>
+            </router-link>
             <van-button square type="primary" class="word-button">
               <img
                 src="../../assets/WordButton2.png"
@@ -65,7 +74,10 @@ const cardsNum = ref("");
 
 const getInfo = async () => {
   try {
-    const resp = await cards(bookId.value);
+    const resp = await cards(bookId.value, {
+      page: 1,
+      limit: 2,
+    });
     cardsInfo.value = resp.data;
     const num = await infor(bookId.value);
     cardsNum.value = num.data;
@@ -74,28 +86,19 @@ const getInfo = async () => {
   }
 };
 getInfo();
-var state1 = reactive({
+var state = reactive({
   isFree: true,
 });
 const changeIsFree1 = () => {
-  state1.isFree = !state1.isFree;
+  state.isFree = !state.isFree;
 };
 const cardCollect = async (id) => {
   try {
     await collectCard(id);
-    // console.log(12);
   } catch (err) {
     console.log(err);
   }
 };
-// const changeCard = async (id) => {
-//   try {
-//     const resp = await cards(bookId.value);
-//     cardsInfo.value = resp.data;
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
 const cardDel = async (id) => {
   try {
     await delCard(id);

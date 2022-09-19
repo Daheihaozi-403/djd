@@ -24,49 +24,19 @@
     <input type="text" class="input-style1" v-model="state.book.describe" />
   </div>
   <div class="font-title mb-4">学习集图片</div>
-  <div class="mb-6 flex">
+  <div class="mb-6 flex" style="overflow: auto; width: 100%">
     <div
-      class="relative overflow-hidden set-photo mr-4"
-      @click="changephoto(1)"
+      v-for="(item, i) of state.photo"
+      :v-model="state.photo[i]"
+      :key="i"
+      @click="changephoto(i)"
+      class="set-photo mr-4 relative"
     >
-      <img src="../../assets/archive(1).png" alt="" />
+      <img :src="item" class="object-none object-left-bottom book-photo" />
       <img
         src="../../assets/Iconsetphoto.png"
         alt=""
-        :class="state.clickPhoto !== 1 ? '' : 'icon-setphoto'"
-      />
-    </div>
-    <div
-      class="relative overflow-hidden set-photo mr-4"
-      @click="changephoto(2)"
-    >
-      <img src="../../assets/archive(2).png" alt="" />
-      <img
-        src="../../assets/Iconsetphoto.png"
-        alt=""
-        :class="state.clickPhoto !== 2 ? '' : 'icon-setphoto'"
-      />
-    </div>
-    <div
-      class="relative overflow-hidden set-photo mr-4"
-      @click="changephoto(3)"
-    >
-      <img src="../../assets/archive3.png" alt="" />
-      <img
-        src="../../assets/Iconsetphoto.png"
-        alt=""
-        :class="state.clickPhoto !== 3 ? '' : 'icon-setphoto'"
-      />
-    </div>
-    <div
-      class="relative overflow-hidden set-photo mr-4"
-      @click="changephoto(4)"
-    >
-      <img src="../../assets/archive4.png" alt="" />
-      <img
-        src="../../assets/Iconsetphoto.png"
-        alt=""
-        :class="state.clickPhoto !== 4 ? '' : 'icon-setphoto'"
+        :class="state.clickPhoto == i ? 'icon-setphoto' : 'hidden'"
       />
     </div>
   </div>
@@ -76,11 +46,12 @@
       style="min-width: 5rem; width: 5rem"
       type="text"
       v-for="(item, i) of state.book.tags"
-      v-model="state.book.tags[i]"
+      v-model="state.book.tags[i].value"
       :key="i"
       :readonly="item.readOnly"
       class="input-tage mb-2"
       @keyup.enter="inputRead(i)"
+      @click.ctrl.left="clickDel(i)"
     />
     <div class="add-tag" @click="onAdd">
       <van-icon name="plus" size="0.62rem" />
@@ -109,28 +80,37 @@
   </div>
   <div class="px-4">
     <div class="button1 mb-4">存为草稿</div>
-    <div class="button2 mb-10" @click="getInfo">保存并创建学习集</div>
+    <div class="button2 mb-10" @click="createBook">保存并创建学习集</div>
   </div>
 </template>
 <script setup>
 import { reactive } from "vue";
 import { create } from "@/api/api";
 
-const getInfo = async () => {
-  await create(state.book);
-};
-
 var state = reactive({
   isFree: true,
   clickPhoto: 0,
-  readonly: [],
+
   book: {
     name: "",
     recommend: "",
     describe: "",
     price: "",
+    cover: "",
     tags: [],
   },
+  photo: [
+    "https://duo-jian-dan.oss-cn-qingdao.aliyuncs.com/covers/1.jpeg",
+    "https://duo-jian-dan.oss-cn-qingdao.aliyuncs.com/covers/2.jpeg",
+    "https://duo-jian-dan.oss-cn-qingdao.aliyuncs.com/covers/3.jpeg",
+    "https://duo-jian-dan.oss-cn-qingdao.aliyuncs.com/covers/4.jpeg",
+    "https://duo-jian-dan.oss-cn-qingdao.aliyuncs.com/covers/5.jpeg",
+    "https://duo-jian-dan.oss-cn-qingdao.aliyuncs.com/covers/6.jpeg",
+    "https://duo-jian-dan.oss-cn-qingdao.aliyuncs.com/covers/7.jpeg",
+    "https://duo-jian-dan.oss-cn-qingdao.aliyuncs.com/covers/8.jpeg",
+    "https://duo-jian-dan.oss-cn-qingdao.aliyuncs.com/covers/9.jpeg",
+    "https://duo-jian-dan.oss-cn-qingdao.aliyuncs.com/covers/10.jpeg",
+  ],
 });
 const changeIsFree = () => {
   state.isFree = !state.isFree;
@@ -138,12 +118,29 @@ const changeIsFree = () => {
 
 const changephoto = (num) => {
   state.clickPhoto = num;
+  state.book.cover = state.photo[num];
 };
 
 const onAdd = () => {
   state.book.tags.push({ value: "", readOnly: false });
-
-  // state.book.tags.splice(i, 1);
+};
+const inputRead = (i) => {
+  state.book.tags[i].readOnly = true;
+};
+const clickDel = (i) => {
+  state.book.tags.splice(i, 1);
+};
+const createBook = async () => {
+  try {
+    let data = JSON.parse(JSON.stringify(state.book));
+    data.tags = data.tags.join(",");
+    data.price = parseFloat(data.price);
+    console.log(state.book);
+    await create(data);
+    window.location.replace("/create/add");
+  } catch (err) {
+    console.log(err);
+  }
 };
 </script>
 <style scoped>
@@ -179,7 +176,18 @@ const onAdd = () => {
 .set-photo {
   height: 4rem;
   width: 4rem;
+  min-width: 4rem;
+  min-height: 4rem;
 }
+
+.book-photo {
+  height: 4rem;
+  width: 4rem;
+  min-width: 4rem;
+  min-height: 4rem;
+  object-fit: cover;
+}
+
 .icon-setphoto {
   position: absolute;
   top: 0;

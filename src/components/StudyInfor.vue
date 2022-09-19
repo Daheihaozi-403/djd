@@ -40,10 +40,10 @@
         <p class="body-p leading-5">
           {{ booksInfo.describe }}
         </p>
-        <div class="flex mt-4">
+        <div class="flex mt-4" v-if="state.isFree">
           <tag
             class="body-p leading-4 mr-2 infor-tag mb-4"
-            v-for="(item, index) in booksInfo.tags.split(',')"
+            v-for="(item, index) in state.bookTage"
             :key="index"
             :value="item.value"
             >{{ item }}</tag
@@ -54,14 +54,14 @@
         <div class="flex">
           <img
             class="mr-4 user-photo rounded-full"
-            :src="booksInfo.user.avatar"
+            :src="booksInfo.user?.avatar"
           />
           <div class="maintainCarCon">
             <div class="text-xs leading-4 mb-1">
-              {{ booksInfo.user.name }}
+              {{ booksInfo.user?.name }}
             </div>
             <div class="text-xs leading-4 color-gray">
-              加入学习 {{ booksInfo.user.created_at_zh }}
+              加入学习 {{ booksInfo.user?.created_at_zh }}
             </div>
           </div>
         </div>
@@ -69,13 +69,6 @@
           创建于 {{ booksInfo.created_at_zh }}
         </div>
       </div>
-      <!-- <div v-if="isTrue.isFree">
-        <van-dialog v-model:show="show" title="标题" show-cancel-button>
-          <img
-            src="https://fastly.jsdelivr.net/npm/@vant/assets/apple-3.jpeg"
-          />
-        </van-dialog>
-      </div> -->
     </div>
     <div class="join-user mb-6">
       <div class="flex justify-between mb-4">
@@ -91,9 +84,9 @@
           >查看所有</router-link
         >
       </div>
-      <ul class="flex justify-between">
+      <ul class="flex justify-between" v-if="state.usersTrue">
         <li
-          v-for="(item, index) in newUsers.items.slice(0, 5)"
+          v-for="(item, index) in state.usersNum"
           :key="index"
           class="new-user"
         >
@@ -104,7 +97,18 @@
     </div>
     <word-card :value="route.query.id" />
     <div class="my-8">
-      <div class="text-center font-medium mb-8 color-green">查看全部卡片</div>
+      <router-link
+        :to="{
+          path: '/card',
+          query: {
+            id: route.query.id,
+          },
+        }"
+      >
+        <div class="text-center font-medium mb-8 color-green">
+          查看全部卡片
+        </div></router-link
+      >
       <div
         class="flex justify-center font-bold color-yellow button-bottom bg-yellow mb-4"
       >
@@ -120,24 +124,49 @@
 <script setup>
 import WordCard from "./common/WordCard";
 import { ref } from "vue";
-// import { reactive } from "vue";
-import { useRoute } from "vue-router";
+import { reactive } from "vue";
 import { infor, users, delBooks, collect } from "@/api/api";
-
+import { useRoute } from "vue-router";
 const route = useRoute();
-const booksInfo = ref("");
-const newUsers = ref("");
+const booksInfo = ref({});
+const newUsers = ref({});
+
+var state = reactive({
+  isFree: true,
+  usersTrue: true,
+  bookTage: "",
+  usersNum: [],
+});
+
 const getInfo = async () => {
   try {
     const resp = await infor(route.query.id);
     const user = await users(route.query.id);
     booksInfo.value = resp.data;
     newUsers.value = user.data;
+    tagNone();
+    userNone();
   } catch (err) {
     console.log(err);
   }
 };
-getInfo();
+const tagNone = () => {
+  if (booksInfo.value.tags) {
+    state.bookTage = booksInfo.value.tags.split(",");
+  } else {
+    state.isFree = !state.isFree;
+  }
+};
+
+const userNone = () => {
+  console.log(newUsers.value);
+  if (newUsers.value.items) {
+    state.usersNum = newUsers.value.items.slice(0, 5);
+    console.log(state.usersNum);
+  } else {
+    state.usersTrue = !state.usersTrue;
+  }
+};
 
 const showPopover = ref(false);
 const actions = [
@@ -149,22 +178,23 @@ const actions = [
   { text: "删除", icon: "delete", num: 2 },
 ];
 
-const onSelect = (action) => {
+const onSelect = async (action) => {
   if (action.num !== 1) {
-    console.log(1212);
-
-    delBooks(route.query.id);
+    try {
+      await delBooks(route.query.id);
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
-const collectBook = () => {
+const collectBook = async () => {
   try {
-    collect(route.query.id);
+    await collect(route.query.id);
   } catch (err) {
     console.log(err);
   }
 };
-collectBook();
-// const show = ref(false);
+getInfo();
 </script>
 <style scoped>
 .infor-box {
