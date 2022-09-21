@@ -31,7 +31,7 @@
     <ul>
       <li class="mb-4" v-for="(item, index) in cardsInfo.items" :key="index">
         <van-swipe-cell>
-          <span class="text-xs"> {{ item.sort }}</span>
+          <span class="text-xs"> {{ index + 1 }}</span>
           <van-cell :border="false" class="word-card">
             <div class="flex justify-between">
               <div>
@@ -55,24 +55,33 @@
 </template>
 <script setup>
 import { ref } from "vue";
-import { infor, cards, collectCard } from "@/api/api";
+import { cards, collectCard } from "@/api/api";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
 
-const cardsInfo = ref("");
-const cardsNum = ref("");
+const cardsInfo = ref({
+  items: [],
+});
+// const cardsNum = ref("");
 const search = ref("");
 const searchWord = ref([]);
+let getInfoParams = {
+  page: 1,
+  limit: 10,
+};
+let isLoading = false;
 const getInfo = async () => {
   try {
-    const resp = await cards(route.query.id, {
-      page: 1,
-      limit: 10,
-    });
-    cardsInfo.value = resp.data;
-    const num = await infor(route.query.id);
-    cardsNum.value = num.data;
+    const resp = await cards(route.query.id, getInfoParams);
+
+    cardsInfo.value.items = cardsInfo.value.items.concat(resp.data.items);
+
+    console.log("123", cardsInfo.value.items);
+    cardsInfo.value.total = resp.data.total;
+    isLoading = false;
+    // const num = await infor(route.query.id);
+    // cardsNum.value = num.data;
   } catch (err) {
     console.log(err);
   }
@@ -89,8 +98,6 @@ const searchCard = () => {
   }
 };
 
-getInfo();
-
 const cardCollect = async (id) => {
   try {
     await collectCard(id);
@@ -100,6 +107,27 @@ const cardCollect = async (id) => {
 };
 const showPopover = ref(false);
 const actions = [{ text: "首字母排序", icon: "add-o" }];
+const scroll = () => {
+  if (cardsInfo.value.items.length === cardsInfo.value.total) {
+    return;
+  }
+
+  // 距离底部200px时加载一次
+  let bottomOfWindow =
+    document.documentElement.offsetHeight -
+      document.documentElement.scrollTop -
+      window.innerHeight <=
+    200;
+  if (bottomOfWindow && !isLoading) {
+    isLoading = true;
+    getInfoParams.page++;
+    getInfo();
+  }
+};
+getInfo();
+window.onscroll = () => {
+  scroll(cardsInfo);
+};
 </script>
 <style scoped>
 .search {

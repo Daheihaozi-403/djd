@@ -25,7 +25,7 @@
                   {{ item.name }}
                 </div>
                 <div class="text-xs mb-1">{{ item.recommend }}</div>
-                <div class="flex">
+                <div class="flex" v-show="item.tags">
                   <tag
                     color="#F4F8F5"
                     text-color="#868887"

@@ -2,7 +2,7 @@
   <div class="mx-4">
     <div class="text-normal font-semibold text-center mt-4 mb-7">创建卡片</div>
     <create-tab class="mb-4" @changeIsFree1="clickEven" />
-    <div>
+    <div v-if="!result">
       <div class="mb-4">所属学习集</div>
 
       <div class="input0 pr-4 mb-4">
@@ -16,33 +16,37 @@
           </option>
         </select>
       </div>
-    </div>
-    <div v-if="!result">
-      <div v-for="(item, i) of card.data" :key="i">
-        <div class="px-4 mb-1 text-xs">{{ i + 1 }}</div>
-        <div class="box mb-4">
-          <div class="flex justify-between mb-4">
-            <div class="card-font">正面</div>
-            <input
-              type="text"
-              class="input-card"
-              v-model="card.data[i].front"
-            />
-          </div>
-          <div class="flex justify-between">
-            <div class="card-font">背面</div>
-            <input type="text" class="input-card" v-model="card.data[i].back" />
-          </div>
-        </div>
-      </div>
 
       <div>
-        <div class="button-style1">
-          <van-icon name="plus" size="0.5rem" @click="onAdd" />
+        <div v-for="(item, i) of card.data" :key="i">
+          <div class="px-4 mb-1 text-xs">{{ i + 1 }}</div>
+          <div class="box mb-4">
+            <div class="flex justify-between mb-4">
+              <div class="card-font">正面</div>
+              <input
+                type="text"
+                class="input-card"
+                v-model="card.data[i].front"
+              />
+            </div>
+            <div class="flex justify-between">
+              <div class="card-font">背面</div>
+              <input
+                type="text"
+                class="input-card"
+                v-model="card.data[i].back"
+              />
+            </div>
+          </div>
         </div>
-        <div class="px-4">
-          <div class="button1 mb-4">保存并继续添加</div>
-          <div class="button2 mb-10" @click="setInfo">保存发布</div>
+
+        <div>
+          <div class="button-style1">
+            <van-icon name="plus" size="0.5rem" @click="onAdd" />
+          </div>
+          <div class="px-4">
+            <div class="button2 mb-10" @click="setInfo">保存发布</div>
+          </div>
         </div>
       </div>
     </div>
@@ -56,10 +60,6 @@
           ><van-icon name="success" color="#FFFFFF" class="mr-1" />已复制</span
         >
       </div>
-      <div class="button4 mb-16" @click="end = !end">
-        <span v-if="!end">开始同步</span>
-        <span v-if="end">正在同步中...</span>
-      </div>
     </div>
   </div>
 </template>
@@ -68,7 +68,7 @@ import CreateTab from "./common/CreateTab";
 import { reactive } from "vue";
 import { myCreate, createCard } from "@/api/api";
 import { ref } from "vue";
-// import { getSizeStyle } from "vant/lib/utils";
+
 const card = reactive({
   data: [
     {
@@ -77,12 +77,7 @@ const card = reactive({
     },
   ],
 });
-// const put = reactive([
-//   {
-//     front: "",
-//     back: "",
-//   },
-// ]);
+
 const result = ref("");
 const booksCreate = ref("");
 const clickEven = (val) => {
@@ -90,12 +85,11 @@ const clickEven = (val) => {
   result.value = val.content;
 };
 const copy = ref(0);
-const end = ref(0);
+
 const getInfo = async () => {
   try {
     const resp = await myCreate();
     booksCreate.value = resp.data;
-    // console.log(booksCreate);
   } catch (err) {
     console.log(err);
   }
@@ -103,7 +97,6 @@ const getInfo = async () => {
 const bookId = ref("");
 const clickBook = (index) => {
   bookId.value = index;
-  // console.log(getSizeStyle(bookId));
 };
 const onAdd = () => {
   card.data.push("");
@@ -111,9 +104,6 @@ const onAdd = () => {
 
 const setInfo = async () => {
   try {
-    // let data = JSON.parse(JSON.stringify(put));
-    // data.back = data.back.join(",");
-    // data.front = data.front.join(",");
     await createCard({
       book_id: bookId.value,
       entries: card.data,

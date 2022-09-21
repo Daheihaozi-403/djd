@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <ul>
+  <ul v-if="state.isFree">
     <li
       class="mb-4"
       v-for="(item, index) in cardsInfo.items"
@@ -19,16 +19,14 @@
         <span class="text-xs"> {{ item.sort }}</span>
         <van-cell :border="false" class="word-card">
           <div class="flex justify-between">
-            <div>
+            <div class="front-text">
               <span class="text-xl font-semibold">{{ item.front }}</span>
             </div>
             <div class="flex">
               <img
-                class="mr-4"
-                :src="require(`../../assets/wordcard1.png`)"
+                :src="require(`@/assets/wordcard1.png`)"
                 @click="cardCollect(item.id)"
               />
-              <img class="" :src="require(`../../assets/wordcard2.png`)" />
             </div>
           </div>
           <div class="word-translate">
@@ -46,12 +44,65 @@
               }"
             >
               <van-button square type="danger" class="word-button button-mr">
-                <img src="../../assets/WordButton1.png" alt="" />
+                <img src="@/assets/WordButton1.png" alt="" />
               </van-button>
             </router-link>
-            <van-button square type="primary" class="word-button">
+            <van-button
+              square
+              type="primary"
+              class="word-button test1"
+              @click="cardDel(item.id)"
+            >
+              <img src="@/assets/WordButton2.png" alt="" />
+            </van-button>
+          </div>
+        </template>
+      </van-swipe-cell>
+    </li>
+  </ul>
+  <ul v-else>
+    <li
+      class="mb-4"
+      v-for="(item, index) in cardCol.items"
+      :key="index"
+      :value="item.value"
+    >
+      <van-swipe-cell>
+        <span class="text-xs"> {{ item.sort }}</span>
+        <van-cell :border="false" class="word-card">
+          <div class="flex justify-between">
+            <div>
+              <span class="text-xl font-semibold">{{ item.front }}</span>
+            </div>
+            <div class="flex">
               <img
-                src="../../assets/WordButton2.png"
+                class="mr-4"
+                :src="require(`@/assets/wordcard1.png`)"
+                @click="cardCollect(item.id)"
+              />
+            </div>
+          </div>
+          <div class="word-translate">
+            {{ item.back }}
+          </div>
+        </van-cell>
+        <template #right>
+          <div class="ml-6 mt-10">
+            <router-link
+              :to="{
+                path: '/change',
+                query: {
+                  id: item.id,
+                },
+              }"
+            >
+              <van-button square type="danger" class="word-button button-mr">
+                <img src="@/assets/WordButton1.png" alt="" />
+              </van-button>
+            </router-link>
+            <van-button square type="primary" class="word-button test">
+              <img
+                src="@/assets/WordButton2.png"
                 alt=""
                 @click="cardDel(item.id)"
               />
@@ -71,29 +122,34 @@ import { infor, cards, collectCard, delCard } from "@/api/api";
 const bookId = defineProps(["value"]);
 const cardsInfo = ref("");
 const cardsNum = ref("");
-
+const cardCol = ref("");
+var state = reactive({
+  isFree: true,
+});
 const getInfo = async () => {
   try {
     const resp = await cards(bookId.value, {
       page: 1,
-      limit: 2,
+      limit: 5,
+    });
+    const colCard = await cards(bookId.value, {
+      type: "collect",
     });
     cardsInfo.value = resp.data;
     const num = await infor(bookId.value);
     cardsNum.value = num.data;
+    cardCol.value = colCard.data;
   } catch (err) {
     console.log(err);
   }
 };
-getInfo();
-var state = reactive({
-  isFree: true,
-});
+
 const changeIsFree1 = () => {
   state.isFree = !state.isFree;
 };
 const cardCollect = async (id) => {
   try {
+    console.log(id);
     await collectCard(id);
   } catch (err) {
     console.log(err);
@@ -101,11 +157,14 @@ const cardCollect = async (id) => {
 };
 const cardDel = async (id) => {
   try {
+    console.log(id);
     await delCard(id);
   } catch (err) {
     console.log(err);
   }
 };
+
+getInfo();
 </script>
 <style scoped>
 .box1 {
@@ -149,5 +208,11 @@ const cardDel = async (id) => {
 }
 .button-mr {
   margin-right: 1rem;
+}
+.front-text {
+  width: 17.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

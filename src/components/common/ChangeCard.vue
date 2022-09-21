@@ -5,27 +5,16 @@
     <div class="box mb-4">
       <div class="flex justify-between mb-4">
         <div class="font">正面</div>
-        <input
-          type="text"
-          class="input"
-          :placeholder="card.front"
-          :value="put.front"
-        />
+        <input type="text" class="input" v-model="put.data.front" />
       </div>
       <div class="flex justify-between">
         <div class="font">背面</div>
-        <input
-          type="text"
-          class="input"
-          :placeholder="card.back"
-          :value="put.back"
-        />
+        <input type="text" class="input" v-model="put.data.back" />
       </div>
     </div>
-
     <div>
       <div class="px-4">
-        <div class="save-button mb-4" @click="saveCard(put)">保存</div>
+        <div class="save-button mb-4" @click="saveCard()">保存</div>
       </div>
     </div>
   </div>
@@ -38,25 +27,27 @@ import { ref } from "vue";
 const route = useRoute();
 const card = ref("");
 const put = reactive({
-  back: [],
-  front: [],
+  data: {
+    front: "",
+    back: "",
+  },
 });
 const cardInfo = async () => {
   try {
     const resp = await cardInfor(route.query.id);
     card.value = resp.data;
-    console.log(card);
+    put.data.front = card.value.front;
+    put.data.back = card.value.back;
+    console.log(put);
   } catch (err) {
     console.log(err);
   }
 };
 
-const saveCard = async (put) => {
+const saveCard = async () => {
   try {
-    let data = JSON.parse(JSON.stringify(put));
-    data.back = data.back.join(",");
-    data.front = data.front.join(",");
-    await cardChange(card.value.id, data);
+    console.log(put.data);
+    await cardChange(card.value.id, put.data);
   } catch (err) {
     console.log(err);
   }

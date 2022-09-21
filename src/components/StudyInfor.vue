@@ -18,7 +18,7 @@
               <template #reference>
                 <van-button type="primary" class="bg-display">
                   <img
-                    src="../assets/studyinforIcon1.png"
+                    src="@/assets/studyinforIcon1.png"
                     alt=""
                     class="icon-study"
                 /></van-button>
@@ -26,18 +26,21 @@
             </van-popover>
           </div>
           <img
-            src="../assets/studyinforIcon3.png"
+            src="@/assets/studyinforIcon3.png"
             alt=""
             class="icon-study ml-2"
             @click="collectBook"
           />
         </div>
       </div>
-      <div class="infor-box-body pt-2">
-        <p class="body-title mb-2">
+      <div
+        class="infor-box-body pt-2"
+        v-if="booksInfo.describe || booksInfo.recommend || state.bookTage"
+      >
+        <p class="body-title mb-2" v-if="booksInfo.recommend">
           {{ booksInfo.recommend }}
         </p>
-        <p class="body-p leading-5">
+        <p class="body-p leading-5" v-if="booksInfo.describe">
           {{ booksInfo.describe }}
         </p>
         <div class="flex mt-4" v-if="state.isFree">
@@ -70,7 +73,7 @@
         </div>
       </div>
     </div>
-    <div class="join-user mb-6">
+    <div class="join-user mb-6" v-if="state.usersTrue">
       <div class="flex justify-between mb-4">
         <span class="text-sm font-semibold">加入的用户</span>
         <router-link
@@ -84,14 +87,16 @@
           >查看所有</router-link
         >
       </div>
-      <ul class="flex justify-between" v-if="state.usersTrue">
+      <ul class="flex justify-between">
         <li
           v-for="(item, index) in state.usersNum"
           :key="index"
           class="new-user"
         >
-          <img :src="item.avatar" />
-          <div class="text-xs leading-5 text-center">{{ item.name }}</div>
+          <img :src="item.avatar" class="rounded-full" />
+          <div class="text-xs leading-5 text-center user-name">
+            {{ item.name }}
+          </div>
         </li>
       </ul>
     </div>
@@ -109,15 +114,6 @@
           查看全部卡片
         </div></router-link
       >
-      <div
-        class="flex justify-center font-bold color-yellow button-bottom bg-yellow mb-4"
-      >
-        <img src="../assets/studybottom.png" alt="" class="button-img" />
-        感谢作者
-      </div>
-      <div class="text-center font-bold text-white button-bottom bg-green">
-        加入学习
-      </div>
     </div>
   </div>
 </template>
@@ -159,10 +155,8 @@ const tagNone = () => {
 };
 
 const userNone = () => {
-  console.log(newUsers.value);
   if (newUsers.value.items) {
     state.usersNum = newUsers.value.items.slice(0, 5);
-    console.log(state.usersNum);
   } else {
     state.usersTrue = !state.usersTrue;
   }
@@ -285,6 +279,11 @@ getInfo();
   height: 1.625rem;
   padding: 0;
   position: absolute;
+}
+.user-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
 <style>
